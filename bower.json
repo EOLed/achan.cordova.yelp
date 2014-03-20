@@ -1,0 +1,11 @@
+{
+  "name": "achan.cordova.yelp",
+  "version": "0.0.0",
+  "dependencies": {
+    "angular": "1.2.14",
+    "oauth-signature-js": "*"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.2.14"
+  }
+}

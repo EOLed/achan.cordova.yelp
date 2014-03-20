@@ -1,0 +1,38 @@
+{
+  "name": "achan.cordova.yelp",
+  "version": "0.0.0",
+  "description": "Angular provider to query the Yelp API",
+  "main": "src/yelp.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/achan/achan.cordova.yelp"
+  },
+  "keywords": [
+    "yelp",
+    "cordova",
+    "angularjs"
+  ],
+  "author": "Amos Chan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/achan/achan.cordova.yelp/issues"
+  },
+  "homepage": "https://github.com/achan/achan.cordova.yelp",
+  "dependencies": {
+    "gulp": "^3.5.6",
+    "gulp-jshint": "^1.5.0",
+    "karma": "^0.12.1",
+    "gulp-karma": "0.0.4"
+  },
+  "devDependencies": {
+    "karma-jasmine": "^0.1.5",
+    "karma-phantomjs-launcher": "^0.1.2",
+    "karma": "^0.12.1"
+  }
+}
