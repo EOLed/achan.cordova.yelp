@@ -14,3 +14,16 @@ Angular provider to query the Yelp API
           tokenSecret: '<token secret>'
         });
       });
+
+## Usage
+
+    angular.module('myapp').controller('MyController', function (yelp) {
+      yelp.search({ category_filter: 'restaurants', radius_filter: 4000 })
+          .success(function (data) {
+            // data returned from Yelp
+            console.log(JSON.stringify(data));
+          });
+    });
+
+Supported `yelp#search` parameters can be found in the
+[Yelp Search API documentation](http://www.yelp.com/developers/documentation/v2/search_api#searchGP).
