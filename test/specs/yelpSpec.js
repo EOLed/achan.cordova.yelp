@@ -13,19 +13,53 @@ describe('Service: yelp', function () {
   }));
 
   describe('yelp#search', function () {
-    it('returns http promise with oauth credentials from configuration',
-        function () {
-      mockOAuthSignatureToReturn('SIGNED');
-      yelp.search({ category_filter: 'restaurants' });
+    var deferred, resolvedData, errorData, apiRequest;
 
-      $httpBackend.expectGET('http://api.yelp.com/v2/search?category_filter=restaurants' +
-                             '&oauth_consumer_key=consumerkey' +
-                             '&oauth_nonce=' + Date.now() +
-                             '&oauth_signature=SIGNED' +
-                             '&oauth_signature_method=HMAC-SHA1' + 
-                             '&oauth_timestamp=' + Date.now() +
-                             '&oauth_token=token').respond(200);
-      $httpBackend.flush();
+    beforeEach(function () {
+      deferred = $q.defer();
+
+      mockOAuthSignatureToReturn('SIGNED');
+
+      yelp.search({ category_filter: 'restaurants' })
+          .then(resolvedSearch, rejectedSearch);
+
+      apiRequest = $httpBackend.expectGET('http://api.yelp.com/v2/search?category_filter=restaurants' +
+                                          '&oauth_consumer_key=consumerkey' +
+                                          '&oauth_nonce=' + Date.now() +
+                                          '&oauth_signature=SIGNED' +
+                                          '&oauth_signature_method=HMAC-SHA1' +
+                                          '&oauth_timestamp=' + Date.now() +
+                                          '&oauth_token=token');
+
+      function resolvedSearch(data) {
+        resolvedData = data;
+      }
+
+      function rejectedSearch(error) {
+        errorData = error;
+      }
+    });
+
+    describe('successful api call', function () {
+      beforeEach(function () {
+        apiRequest.respond(200, { random: 'data' });
+        $httpBackend.flush();
+      });
+
+      it('resolves promise with yelp data', function () {
+        expect(resolvedData).toEqual({ random: 'data' });
+      });
+    });
+
+    describe('unsuccessful api call', function () {
+      beforeEach(function () {
+        apiRequest.respond(500, { random: 'data' });
+        $httpBackend.flush();
+      });
+
+      it('rejects promise with yelp response', function () {
+        expect(errorData).toEqual({ random: 'data' });
+      });
     });
   });
 });

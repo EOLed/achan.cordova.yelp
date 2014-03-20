@@ -3,31 +3,39 @@ angular.module('achan.cordova.yelp', []).provider('yelp', function () {
   var credentials = {};
   this.identify = function (creds) {
     credentials = creds;
-    console.log('credentials: ' + creds.consumerKey);
   };
 
-  var search = function ($http) {
+  var search = function (services) {
+    var $http = services.$http,
+        $q = services.$q;
+
     return function (parameters) {
-      var httpMethod = 'GET',
+      var deferred = $q.defer(),
+          httpMethod = 'GET',
           url = baseUrl + '/search';
 
-      parameters = identifiedParams(parameters);
-      var encodedSignature = oauthSignature.generate(httpMethod,
+      $http.get(baseUrl + '/search', {
+        params: buildSearchParameters(httpMethod, url, parameters)
+      }).success(function (data) {
+        deferred.resolve(data);
+      }).error(function (error) {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    };
+  };
+
+  function buildSearchParameters(httpMethod, url, params) {
+    params = identifiedParams(params);
+    params.oauth_signature = oauthSignature.generate(httpMethod,
                                                      url,
-                                                     parameters,
+                                                     params,
                                                      credentials.consumerSecret,
                                                      credentials.tokenSecret);
 
-      return $http.get(baseUrl + '/search',
-                       { params: { category_filter: 'restaurants',
-                                   oauth_consumer_key: credentials.consumerKey, 
-                                   oauth_token: credentials.token,
-                                   oauth_signature_method: 'HMAC-SHA1',
-                                   oauth_signature: encodedSignature,
-                                   oauth_timestamp: parameters.oauth_timestamp,
-                                   oauth_nonce: parameters.oauth_nonce } });
-    };
-  };
+    return params;
+  }
 
   function identifiedParams(params) {
     var timestamp = Date.now();
@@ -40,9 +48,9 @@ angular.module('achan.cordova.yelp', []).provider('yelp', function () {
     return params;
   }
 
-  this.$get = function ($http) {
+  this.$get = function ($http, $q) {
     return {
-      search: search($http)
+      search: search({ $http: $http, $q: $q })
     };
   };
 });

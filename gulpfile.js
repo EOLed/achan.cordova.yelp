@@ -7,7 +7,7 @@ gulp.task('lint', function () {
 });
 
 gulp.task('watch', function () {
-  var watcher = gulp.watch(['src/**/*.js', 'test/spec/**/*.js'],
+  var watcher = gulp.watch(['src/**/*.js', 'test/specs/**/*.js'],
                            ['lint', 'test']);
   watcher.on('change', function (event) {
     console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
