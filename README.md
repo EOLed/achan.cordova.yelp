@@ -19,7 +19,7 @@ Angular provider to query the Yelp API
 
     angular.module('myapp').controller('MyController', function (yelp) {
       yelp.search({ category_filter: 'restaurants', radius_filter: 4000 })
-          .success(function (data) {
+          .then(function (data) {
             // data returned from Yelp
             console.log(JSON.stringify(data));
           });
