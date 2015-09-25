@@ -1,24 +1,26 @@
-angular.module('achan.cordova.yelp', []).provider('yelp', function () {
+"use strict";
+
+angular.module('achan.cordova.yelp', []).provider('yelp', function() {
   var baseUrl = 'http://api.yelp.com/v2';
   var credentials = {};
-  this.identify = function (creds) {
+  this.identify = function(creds) {
     credentials = creds;
   };
 
-  var search = function (services) {
+  var search = function(services) {
     var $http = services.$http,
-        $q = services.$q;
+    $q = services.$q;
 
-    return function (parameters) {
+    return function(parameters) {
       var deferred = $q.defer(),
-          httpMethod = 'GET',
-          url = baseUrl + '/search';
+      httpMethod = 'GET',
+      url = baseUrl + '/search';
 
-      $http.get(baseUrl + '/search', {
+      $http.jsonp(url, {
         params: buildSearchParameters(httpMethod, url, parameters)
-      }).success(function (data) {
+      }).success(function(data) {
         deferred.resolve(data);
-      }).error(function (error) {
+      }).error(function(error) {
         deferred.reject(error);
       });
 
@@ -28,12 +30,7 @@ angular.module('achan.cordova.yelp', []).provider('yelp', function () {
 
   function buildSearchParameters(httpMethod, url, params) {
     params = identifiedParams(params);
-    params.oauth_signature = oauthSignature.generate(httpMethod,
-                                                     url,
-                                                     params,
-                                                     credentials.consumerSecret,
-                                                     credentials.tokenSecret);
-
+    params.oauth_signature = oauthSignature.generate(httpMethod, url, params, credentials.consumerSecret, credentials.tokenSecret);
     return params;
   }
 
@@ -44,13 +41,14 @@ angular.module('achan.cordova.yelp', []).provider('yelp', function () {
     params.oauth_nonce = timestamp;
     params.oauth_timestamp = timestamp;
     params.oauth_signature_method = 'HMAC-SHA1';
+    params.callback = 'angular.callbacks._0';
 
     return params;
   }
 
-  this.$get = function ($http, $q) {
+  this.$get = function($http, $q) {
     return {
-      search: search({ $http: $http, $q: $q })
+      search: search({$http: $http, $q: $q})
     };
   };
 });
